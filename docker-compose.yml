@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    expose:
+      - 5432
+    volumes:
+      - 'db:/var/lib/postgresql/data'
+
+  app:
+    container_name: devices-app
+    build: .
+    depends_on:
+      - db
+      - prisma-sync
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db/devicesdb?schema=public
+
+  prisma-sync:
+    container_name: prisma-sync
+    build:
+      context: .
+      dockerfile: prisma.dockerfile
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db/devicesdb?schema=public
+
+volumes:
+  db:
+    driver: 'local'

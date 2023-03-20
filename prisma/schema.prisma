@@ -1,0 +1,24 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model devices {
+  id                String    @id(map: "devices_pk") @unique @db.VarChar
+  model             String?   @db.VarChar
+  brand             String?   @db.VarChar
+  release_date      String?   @db.VarChar
+  os                String?   @db.VarChar
+  is_new            Boolean?  @default(false)
+  received_datatime DateTime? @default(now()) @db.Date
+  update_datetime   DateTime? @updatedAt
+  created_datetime  DateTime  @default(now()) @db.Date
+}
